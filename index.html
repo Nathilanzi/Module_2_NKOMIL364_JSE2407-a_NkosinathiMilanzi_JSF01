@@ -146,6 +146,25 @@
   <!-- Loading indicator -->
   <div x-show="loading" class="text-center my-4">Loading...</div>
 </div>
+<!-- Modal for product details -->
+<div x-show="modalOpen" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white rounded-lg p-8 relative">
+    <button @click="modalOpen = false" class="absolute top-2 right-2">
+      <svg class="w-6 h-6 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <div x-show="!modalLoading">
+      <h2 x-text="modalProduct.title" class="text-2xl mb-4"></h2>
+      <img :src="modalProduct.image" alt="Product Image" class="w-full h-48 object-contain mb-4">
+      <p x-text="modalProduct.description" class="text-gray-600 mb-4"></p>
+      <p x-text="'$' + modalProduct.price" class="text-green-500 text-lg mb-4"></p>
+      <button @click="toggleWishlist(modalProduct.id)" :class="wishlist.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-4 py-2 rounded">Add to Wishlist</button>
+      <button @click="toggleCart(modalProduct.id)" :class="cart.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-4 py-2 rounded">Add to Cart</button>
+    </div>
+    <div x-show="modalLoading" class="text-center">Loading...</div>
+  </div>
+</div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
