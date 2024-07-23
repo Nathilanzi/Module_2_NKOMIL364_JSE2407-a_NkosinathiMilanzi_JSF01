@@ -196,3 +196,31 @@
           this.fetchCategories();
           this.fetchProducts();
         },
+
+         // Fetch product categories from the API
+         async fetchCategories() {
+          try {
+            const res = await fetch('https://fakestoreapi.com/products/categories');
+            this.categories = await res.json();
+            this.filteredCategories = this.categories;
+          } catch (err) {
+            console.error('Failed to fetch categories:', err);
+          }
+        },
+
+        // Fetch products from the API and apply filters and sorting
+        async fetchProducts() {
+          this.loading = true;
+          try {
+            const res = await fetch('https://fakestoreapi.com/products');
+            let data = await res.json();
+            if (this.filter) {
+              data = data.filter(product => product.category === this.filter);
+            }
+            data = data.sort((a, b) => this.sortOrder === 'asc' ? a.price - b.price : b.price - a.price);
+            this.products = data;
+          } catch (err) {
+            console.error('Failed to fetch products:', err);
+          }
+          this.loading = false;
+        },
