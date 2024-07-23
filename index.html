@@ -96,3 +96,12 @@
           <h2 x-text="product.title" class="text-xl mt-2"></h2>
           <p x-text="product.category" class="text-gray-600"></p>
           <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
+          <!-- Wishlist and Cart Buttons -->
+          <button @click.stop="toggleWishlist(product.id)" :class="wishlist.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded">Wishlist</button>
+          <button @click.stop="toggleCart(product.id)" :class="cart.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded">Cart</button>
+        </div>
+      </template>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div x-show="loading" class="text-center my-4">Loading...</div>
