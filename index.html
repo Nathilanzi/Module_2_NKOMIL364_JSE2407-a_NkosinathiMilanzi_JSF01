@@ -239,3 +239,21 @@
           this.filteredCategories = this.categories;
           this.fetchProducts();
         },
+
+          // Toggle product in or out of the wishlist
+          toggleWishlist(productId) {
+          if (this.wishlist.includes(productId)) {
+            this.wishlist = this.wishlist.filter(id => id !== productId);
+          } else {
+            this.wishlist.push(productId);
+          }
+        },
+
+        // Toggle product in or out of the cart
+        toggleCart(productId) {
+          if (this.cart.includes(productId)) {
+            this.cart = this.cart.filter(id => id !== productId);
+          } else {
+            this.cart.push(productId);
+          }
+        },
