@@ -236,3 +236,13 @@
           }
           this.modalLoading = false;
         },
+         // Toggle product in wishlist
+         toggleWishlist(productId) {
+          if (this.wishlist.includes(productId)) {
+            this.wishlist = this.wishlist.filter(id => id !== productId);
+          } else {
+            this.wishlist.push(productId);
+          }
+          this.saveWishlistToLocalStorage(); // Save wishlist to local storage
+          this.fetchProducts(); // Refresh product data
+        },
