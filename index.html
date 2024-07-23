@@ -1,304 +1,518 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Include Alpine.js for reactive UI components -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <!-- Include Tailwind CSS for styling -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>SwiftCart</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Include Alpine.js for reactive UI components -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <!-- Include Tailwind CSS for styling -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <title>SwiftCart</title>
-</head>
+  <body x-data="productApp()" x-init="init()">
+    <!-- Header with navigation and branding -->
+    <header class="sticky top-0 z-50">
+      <nav class="bg-gray-500 border-gray-200">
+        <div
+          class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
+        >
+          <!-- Brand logo and name -->
+          <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+            <img
+              src="/public/online-shop.png"
+              class="h-8"
+              alt="SwiftCart Logo"
+            />
+            <span
+              class="self-center text-2xl font-semibold whitespace-nowrap text-white"
+              >SwiftCart</span
+            >
+          </a>
+          <div>
+            <!-- Mobile menu button -->
+            <button
+              @click="isOpen = !isOpen"
+              data-collapse-toggle="navbar-default"
+              type="button"
+              class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              aria-controls="navbar-default"
+              aria-expanded="false"
+            >
+              <span class="sr-only">Open main menu</span>
+              <svg
+                class="w-5 h-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 17 14"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M1 1h15M1 7h15M1 13h15"
+                />
+              </svg>
+            </button>
+            <!-- Navigation menu -->
+            <div
+              :class="{ 'hidden': !isOpen }"
+              class="hidden w-full md:block md:w-auto"
+              id="navbar-dropdown"
+            >
+              <ul
+                class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-500 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0"
+              >
+                <!-- Wishlist link with count -->
+                <li>
+                  <a
+                    href="#wishlist"
+                    @click="showWishlistItems"
+                    class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
+                    >Wishlist (<span x-text="wishlist.length"></span>)</a
+                  >
+                </li>
+                <!-- Cart link with item count -->
+                <li class="relative">
+                  <a
+                    href="#cart"
+                    @click="showCartItems"
+                    class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
+                  >
+                    <div class="absolute left-3 -top-2">
+                      <p
+                        class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white"
+                        x-text="cart.length"
+                      ></p>
+                    </div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="h-6 w-6 stroke-white cursor-pointer md:hidden lg:block"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                      />
+                    </svg>
+                  </a>
+                </li>
+                <!-- Login link -->
+                <li>
+                  <a
+                    href="/login"
+                    class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
+                    >Login</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-<body x-data="productApp()" x-init="init()">
-  <!-- Header with navigation and branding -->
-  <header class="sticky top-0 z-50">
-    <nav class="bg-gray-500 border-gray-200">
-      <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <!-- Brand logo and name -->
-        <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="/public/online-shop.png" class="h-8" alt="SwiftCart Logo" />
-          <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">SwiftCart</span>
-        </a>
-        <div> 
-
-           <!-- Mobile menu button -->
-           <button @click="isOpen = !isOpen" data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-default" aria-expanded="false">
-            <span class="sr-only">Open main menu</span>
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+    <!-- Main content area -->
+    <div x-show="!showWishlist && !showCart" class="container mx-auto p-4">
+      <!-- Search and filter controls -->
+      <div class="flex flex-wrap justify-between items-center mb-4">
+        <div class="relative w-full md:w-auto">
+          <!-- Search input for filtering categories -->
+          <input
+            type="text"
+            placeholder="Search categories..."
+            x-model="searchTerm"
+            @input="filterCategories()"
+            class="bg-gray-200 text-gray-900 px-4 py-2 rounded-l-md w-full md:w-64"
+          />
+          <!-- Dropdown button for sorting categories -->
+          <button
+            @click="dropdownOpen = !dropdownOpen"
+            class="bg-gray-300 text-gray-900 px-4 py-2 rounded-r-md absolute right-0 top-0 h-full flex items-center"
+          >
+            <svg
+              class="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 9.75l-7.5 7.5-7.5-7.5"
+              />
             </svg>
           </button>
-          <!-- Navigation menu -->
-          <div :class="{ 'hidden': !isOpen }" class="hidden w-full md:block md:w-auto" id="navbar-dropdown">
-            <ul class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-500 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
-
-              <!-- Wishlist link with count -->
-              <li>
-                <a href="#wishlist" @click="showWishlistItems" class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Wishlist (<span x-text="wishlist.length"></span>)</a>
-              </li>
-              <!-- Cart link with item count -->
-              <li class="relative">
-                <a href="#cart" @click="showCartItems" class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
-                  <div class="absolute left-3 -top-2">
-                    <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white" x-text="cart.length"></p>
-                  </div>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 stroke-white cursor-pointer md:hidden lg:block">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                  </svg>
-                </a>
-              </li>
-              <!-- Login link -->
-              <li>
-                <a href="/login" class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Login</a>
-              </li>
-            </ul>
+          <!-- Dropdown menu for filtering categories -->
+          <div
+            x-show="dropdownOpen"
+            class="absolute bg-white border border-gray-300 rounded-md mt-2 w-full md:w-64"
+          >
+            <template x-for="category in filteredCategories" :key="category">
+              <button
+                @click="filter = category; fetchProducts(); dropdownOpen = false"
+                class="block px-4 py-2 w-full text-left hover:bg-gray-100"
+                x-text="category"
+              ></button>
+            </template>
           </div>
         </div>
+        <div class="flex flex-wrap mt-4 md:mt-0 space-x-2">
+          <!-- Buttons for sorting products and resetting filters -->
+          <button
+            @click="sortOrder = 'asc'; fetchProducts()"
+            class="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Price: Low to High
+          </button>
+          <button
+            @click="sortOrder = 'desc'; fetchProducts()"
+            class="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Price: High to Low
+          </button>
+          <button
+            @click="resetFilters()"
+            class="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Reset
+          </button>
+        </div>
       </div>
-    </nav>
-  </header>
 
-  <!-- Main content area -->
-  <div x-show="!showWishlist && !showCart" class="container mx-auto p-4">
-    <!-- Search and filter controls -->
-    <div class="flex flex-wrap justify-between items-center mb-4">
-      <div class="relative w-full md:w-auto">
-        <!-- Search input for filtering categories -->
-        <input type="text" placeholder="Search categories..." x-model="searchTerm" @input="filterCategories()" class="bg-gray-200 text-gray-900 px-4 py-2 rounded-l-md w-full md:w-64" />
-        <!-- Dropdown button for sorting categories -->
-        <button @click="dropdownOpen = !dropdownOpen" class="bg-gray-300 text-gray-900 px-4 py-2 rounded-r-md absolute right-0 top-0 h-full flex items-center">
-          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 9.75l-7.5 7.5-7.5-7.5" />
-          </svg>
+      <!-- Product grid -->
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      >
+        <template x-for="product in products" :key="product.id">
+          <div class="border rounded-lg p-4" @click="openModal(product.id)">
+            <img
+              :src="product.image"
+              alt="Product Image"
+              class="w-full h-48 object-flex"
+            />
+            <h2 x-text="product.title" class="text-xl mt-2"></h2>
+            <p x-text="product.category" class="text-gray-600"></p>
+            <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
+            <!-- Wishlist and cart buttons -->
+            <button
+              @click.stop="toggleWishlist(product.id)"
+              :class="wishlist.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'"
+              class="text-white px-2 py-1 rounded mt-2"
+            >
+              Wishlist
+            </button>
+            <button
+              @click.stop="toggleCart(product.id)"
+              :class="cart.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'"
+              class="text-white px-2 py-1 rounded mt-2"
+            >
+              Cart
+            </button>
+          </div>
+        </template>
+      </div>
+
+      <!-- Loading spinner -->
+      <div
+        x-show="loading"
+        class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50"
+      >
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <!-- Modal for product details -->
+    <div
+      x-show="modalOpen"
+      class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center"
+    >
+      <div class="bg-white rounded-lg p-8 relative w-11/12 md:w-3/4 lg:w-1/2">
+        <button
+          @click="modalOpen = false"
+          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        >
+          &times;
         </button>
-        <!-- Dropdown menu for filtering categories -->
-        <div x-show="dropdownOpen" class="absolute bg-white border border-gray-300 rounded-md mt-2 w-full md:w-64">
-          <template x-for="category in filteredCategories" :key="category">
-            <button @click="filter = category; fetchProducts(); dropdownOpen = false" class="block px-4 py-2 w-full text-left hover:bg-gray-100" x-text="category"></button>
-          </template>
-        </div>
-      </div>
-      <div class="flex flex-wrap mt-4 md:mt-0 space-x-2">
-        <!-- Buttons for sorting products and resetting filters -->
-        <button @click="sortOrder = 'asc'; fetchProducts()" class="bg-blue-500 text-white px-4 py-2 rounded">Price: Low to High</button>
-        <button @click="sortOrder = 'desc'; fetchProducts()" class="bg-blue-500 text-white px-4 py-2 rounded">Price: High to Low</button>
-        <button @click="resetFilters()" class="bg-blue-500 text-white px-4 py-2 rounded">Reset</button>
-      </div>
-    </div>
-
-        <!-- Product grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <template x-for="product in products" :key="product.id">
-            <div class="border rounded-lg p-4" @click="openModal(product.id)">
-              <img :src="product.image" alt="Product Image" class="w-full h-48 object-flex">
-              <h2 x-text="product.title" class="text-xl mt-2"></h2>
-              <p x-text="product.category" class="text-gray-600"></p>
-              <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
-              <!-- Wishlist and cart buttons -->
-              <button @click.stop="toggleWishlist(product.id)" :class="wishlist.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded mt-2">Wishlist</button>
-              <button @click.stop="toggleCart(product.id)" :class="cart.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded mt-2">Cart</button>
+        <template x-if="modalProduct">
+          <div>
+            <img
+              :src="modalProduct.image"
+              alt="Product Image"
+              class="w-full h-64 object-contain"
+            />
+            <h2 x-text="modalProduct.title" class="text-2xl mt-4"></h2>
+            <p
+              x-text="'$' + modalProduct.price"
+              class="text-green-500 text-xl mt-2"
+            ></p>
+            <p x-text="modalProduct.description" class="text-gray-700 mt-2"></p>
+            <div class="flex space-x-4 mt-4">
+              <!-- Wishlist and cart buttons in modal -->
+              <button
+                @click="toggleWishlist(modalProduct.id)"
+                :class="wishlist.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'"
+                class="text-white px-4 py-2 rounded"
+              >
+                Wishlist
+              </button>
+              <button
+                @click="toggleCart(modalProduct.id)"
+                :class="cart.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'"
+                class="text-white px-4 py-2 rounded"
+              >
+                Cart
+              </button>
             </div>
-          </template>
-        </div>
-
-         <!-- Loading spinner -->
-    <div x-show="loading" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-      <div class="loader"></div>
-    </div>
-  </div>
-
-   <!-- Modal for product details -->
-   <div x-show="modalOpen" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-8 relative w-11/12 md:w-3/4 lg:w-1/2">
-      <button @click="modalOpen = false" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
-      <template x-if="modalProduct">
-        <div>
-          <img :src="modalProduct.image" alt="Product Image" class="w-full h-64 object-contain">
-          <h2 x-text="modalProduct.title" class="text-2xl mt-4"></h2>
-          <p x-text="'$' + modalProduct.price" class="text-green-500 text-xl mt-2"></p>
-          <p x-text="modalProduct.description" class="text-gray-700 mt-2"></p>
-          <div class="flex space-x-4 mt-4">
-            <!-- Wishlist and cart buttons in modal -->
-            <button @click="toggleWishlist(modalProduct.id)" :class="wishlist.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-4 py-2 rounded">Wishlist</button>
-            <button @click="toggleCart(modalProduct.id)" :class="cart.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-4 py-2 rounded">Cart</button>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
-  </div>
 
-  <!-- Wishlist section -->
-  <div x-show="showWishlist" class="container mx-auto p-4">
-    <h2 class="text-2xl mb-4">Wishlist</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      <template x-for="product in wishlistProducts" :key="product.id">
-        <div class="border rounded-lg p-4" @click="openModal(product.id)">
-          <img :src="product.image" alt="Product Image" class="w-full h-48 object-contain">
-          <h2 x-text="product.title" class="text-xl mt-2"></h2>
-          <p x-text="product.category" class="text-gray-600"></p>
-          <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
-          <!-- Wishlist and cart buttons -->
-          <button @click.stop="toggleWishlist(product.id)" :class="wishlist.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded">Wishlist</button>
-          <button @click.stop="toggleCart(product.id)" :class="cart.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded">Cart</button>
-        </div>
-      </template>
+    <!-- Wishlist section -->
+    <div x-show="showWishlist" class="container mx-auto p-4">
+      <h2 class="text-2xl mb-4">Wishlist</h2>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      >
+        <template x-for="product in wishlistProducts" :key="product.id">
+          <div class="border rounded-lg p-4" @click="openModal(product.id)">
+            <img
+              :src="product.image"
+              alt="Product Image"
+              class="w-full h-48 object-contain"
+            />
+            <h2 x-text="product.title" class="text-xl mt-2"></h2>
+            <p x-text="product.category" class="text-gray-600"></p>
+            <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
+            <!-- Wishlist and cart buttons -->
+            <button
+              @click.stop="toggleWishlist(product.id)"
+              :class="wishlist.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'"
+              class="text-white px-2 py-1 rounded"
+            >
+              Wishlist
+            </button>
+            <button
+              @click.stop="toggleCart(product.id)"
+              :class="cart.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'"
+              class="text-white px-2 py-1 rounded"
+            >
+              Cart
+            </button>
+          </div>
+        </template>
+      </div>
+      <!-- Back button to return to product listing -->
+      <button
+        @click="showWishlist = false"
+        class="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Back to Products
+      </button>
     </div>
-    <!-- Back button to return to product listing -->
-    <button @click="showWishlist = false" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Back to Products</button>
-  </div>
 
-  <!-- Cart section -->
-  <div x-show="showCart" class="container mx-auto p-4">
-    <h2 class="text-2xl mb-4">Cart</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      <template x-for="product in cartProducts" :key="product.id">
-        <div class="border rounded-lg p-4" @click="openModal(product.id)">
-          <img :src="product.image" alt="Product Image" class="w-full h-48 object-contain">
-          <h2 x-text="product.title" class="text-xl mt-2"></h2>
-          <p x-text="product.category" class="text-gray-600"></p>
-          <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
-          <!-- Wishlist and cart buttons -->
-          <button @click.stop="toggleWishlist(product.id)" :class="wishlist.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded">Wishlist</button>
-          <button @click.stop="toggleCart(product.id)" :class="cart.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-2 py-1 rounded">Cart</button>
-        </div>
-      </template>
+    <!-- Cart section -->
+    <div x-show="showCart" class="container mx-auto p-4">
+      <h2 class="text-2xl mb-4">Cart</h2>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      >
+        <template x-for="product in cartProducts" :key="product.id">
+          <div class="border rounded-lg p-4" @click="openModal(product.id)">
+            <img
+              :src="product.image"
+              alt="Product Image"
+              class="w-full h-48 object-contain"
+            />
+            <h2 x-text="product.title" class="text-xl mt-2"></h2>
+            <p x-text="product.category" class="text-gray-600"></p>
+            <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
+            <!-- Wishlist and cart buttons -->
+            <button
+              @click.stop="toggleWishlist(product.id)"
+              :class="wishlist.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'"
+              class="text-white px-2 py-1 rounded"
+            >
+              Wishlist
+            </button>
+            <button
+              @click.stop="toggleCart(product.id)"
+              :class="cart.includes(product.id) ? 'bg-red-500' : 'bg-gray-500'"
+              class="text-white px-2 py-1 rounded"
+            >
+              Cart
+            </button>
+          </div>
+        </template>
+      </div>
+      <!-- Back button to return to product listing -->
+      <button
+        @click="showCart = false"
+        class="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Back to Products
+      </button>
     </div>
-    <!-- Back button to return to product listing -->
-    <button @click="showCart = false" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Back to Products</button>
-  </div>
 
-   <!-- Alpine.js script for managing application state and behavior -->
-   <script>
-    function productApp() {
-      return {
-        products: [],
-        categories: [],
-        filteredCategories: [],
-        wishlist: [],
-        cart: [],
-        wishlistProducts: [],
-        cartProducts: [],
-        searchTerm: '',
-        sortOrder: 'asc',
-        filter: '',
-        loading: false,
-        modalOpen: false,
-        modalProduct: null,
-        showWishlist: false,
-        showCart: false,
-        isOpen: false,
-        dropdownOpen: false,
-                // Initialize the app by fetching categories and products
-                init() {
-          this.fetchCategories();
-          this.fetchProducts();
-        },
+    <!-- Alpine.js script for managing application state and behavior -->
+    <script>
+      function productApp() {
+        return {
+          products: [],
+          categories: [],
+          filteredCategories: [],
+          wishlist: [],
+          cart: [],
+          wishlistProducts: [],
+          cartProducts: [],
+          searchTerm: "",
+          sortOrder: "asc",
+          filter: "",
+          loading: false,
+          modalOpen: false,
+          modalProduct: null,
+          showWishlist: false,
+          showCart: false,
+          isOpen: false,
+          dropdownOpen: false,
+          // Initialize the app by fetching categories and products
+          init() {
+            this.fetchCategories();
+            this.fetchProducts();
+          },
 
-         // Fetch product categories from the API
-         async fetchCategories() {
-          try {
-            const res = await fetch('https://fakestoreapi.com/products/categories');
-            this.categories = await res.json();
-            this.filteredCategories = this.categories;
-          } catch (err) {
-            console.error('Failed to fetch categories:', err);
-          }
-        },
-
-        // Fetch products from the API and apply filters and sorting
-        async fetchProducts() {
-          this.loading = true;
-          try {
-            const res = await fetch('https://fakestoreapi.com/products');
-            let data = await res.json();
-            if (this.filter) {
-              data = data.filter(product => product.category === this.filter);
+          // Fetch product categories from the API
+          async fetchCategories() {
+            try {
+              const res = await fetch(
+                "https://fakestoreapi.com/products/categories"
+              );
+              this.categories = await res.json();
+              this.filteredCategories = this.categories;
+            } catch (err) {
+              console.error("Failed to fetch categories:", err);
             }
-            data = data.sort((a, b) => this.sortOrder === 'asc' ? a.price - b.price : b.price - a.price);
-            this.products = data;
-          } catch (err) {
-            console.error('Failed to fetch products:', err);
-          }
-          this.loading = false;
-        },
+          },
 
-         // Filter categories based on search term
-         filterCategories() {
-          const term = this.searchTerm.toLowerCase();
-          this.filteredCategories = this.categories.filter(category => category.toLowerCase().includes(term));
-        },
+          // Fetch products from the API and apply filters and sorting
+          async fetchProducts() {
+            this.loading = true;
+            try {
+              const res = await fetch("https://fakestoreapi.com/products");
+              let data = await res.json();
+              if (this.filter) {
+                data = data.filter(
+                  (product) => product.category === this.filter
+                );
+              }
+              data = data.sort((a, b) =>
+                this.sortOrder === "asc" ? a.price - b.price : b.price - a.price
+              );
+              this.products = data;
+            } catch (err) {
+              console.error("Failed to fetch products:", err);
+            }
+            this.loading = false;
+          },
 
-        // Reset filters and reload products
-        resetFilters() {
-          this.filter = '';
-          this.sortOrder = 'asc';
-          this.searchTerm = '';
-          this.filteredCategories = this.categories;
-          this.fetchProducts();
-        },
+          // Filter categories based on search term
+          filterCategories() {
+            const term = this.searchTerm.toLowerCase();
+            this.filteredCategories = this.categories.filter((category) =>
+              category.toLowerCase().includes(term)
+            );
+          },
+
+          // Reset filters and reload products
+          resetFilters() {
+            this.filter = "";
+            this.sortOrder = "asc";
+            this.searchTerm = "";
+            this.filteredCategories = this.categories;
+            this.fetchProducts();
+          },
 
           // Toggle product in or out of the wishlist
           toggleWishlist(productId) {
-          if (this.wishlist.includes(productId)) {
-            this.wishlist = this.wishlist.filter(id => id !== productId);
-          } else {
-            this.wishlist.push(productId);
-          }
-        },
+            if (this.wishlist.includes(productId)) {
+              this.wishlist = this.wishlist.filter((id) => id !== productId);
+            } else {
+              this.wishlist.push(productId);
+            }
+          },
 
-        // Toggle product in or out of the cart
-        toggleCart(productId) {
-          if (this.cart.includes(productId)) {
-            this.cart = this.cart.filter(id => id !== productId);
-          } else {
-            this.cart.push(productId);
-          }
-        },
+          // Toggle product in or out of the cart
+          toggleCart(productId) {
+            if (this.cart.includes(productId)) {
+              this.cart = this.cart.filter((id) => id !== productId);
+            } else {
+              this.cart.push(productId);
+            }
+          },
 
-        // Show wishlist items by fetching products and filtering by wishlist
-        async showWishlistItems() {
-          this.loading = true;
-          try {
-            const res = await fetch('https://fakestoreapi.com/products');
-            const data = await res.json();
-            this.wishlistProducts = data.filter(product => this.wishlist.includes(product.id));
-            this.showWishlist = true;
-          } catch (err) {
-            console.error('Failed to fetch wishlist items:', err);
-          }
-          this.loading = false;
-        },
+          // Show wishlist items by fetching products and filtering by wishlist
+          async showWishlistItems() {
+            this.loading = true;
+            try {
+              const res = await fetch("https://fakestoreapi.com/products");
+              const data = await res.json();
+              this.wishlistProducts = data.filter((product) =>
+                this.wishlist.includes(product.id)
+              );
+              this.showWishlist = true;
+            } catch (err) {
+              console.error("Failed to fetch wishlist items:", err);
+            }
+            this.loading = false;
+          },
 
-        // Show cart items by fetching products and filtering by cart
-        async showCartItems() {
-          this.loading = true;
-          try {
-            const res = await fetch('https://fakestoreapi.com/products');
-            const data = await res.json();
-            this.cartProducts = data.filter(product => this.cart.includes(product.id));
-            this.showCart = true;
-          } catch (err) {
-            console.error('Failed to fetch cart items:', err);
-          }
-          this.loading = false;
-        },
+          // Show cart items by fetching products and filtering by cart
+          async showCartItems() {
+            this.loading = true;
+            try {
+              const res = await fetch("https://fakestoreapi.com/products");
+              const data = await res.json();
+              this.cartProducts = data.filter((product) =>
+                this.cart.includes(product.id)
+              );
+              this.showCart = true;
+            } catch (err) {
+              console.error("Failed to fetch cart items:", err);
+            }
+            this.loading = false;
+          },
 
           // Open a modal with detailed product information
           async openModal(productId) {
-          try {
-            const res = await fetch(`https://fakestoreapi.com/products/${productId}`);
-            this.modalProduct = await res.json();
-            this.modalOpen = true;
-          } catch (err) {
-            console.error('Failed to fetch product details:', err);
-          }
-        },
-      };
-    }
-  </script>
-</body>
-
+            try {
+              const res = await fetch(
+                `https://fakestoreapi.com/products/${productId}`
+              );
+              this.modalProduct = await res.json();
+              this.modalOpen = true;
+            } catch (err) {
+              console.error("Failed to fetch product details:", err);
+            }
+          },
+        };
+      }
+    </script>
+  </body>
 </html>
