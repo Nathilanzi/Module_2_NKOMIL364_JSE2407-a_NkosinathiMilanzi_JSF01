@@ -246,3 +246,16 @@
           this.saveWishlistToLocalStorage(); // Save wishlist to local storage
           this.fetchProducts(); // Refresh product data
         },
+ // Save wishlist to local storage
+ saveWishlistToLocalStorage() {
+          localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+        },
+        // Toggle product in cart
+        toggleCart(productId) {
+          if (this.cart.includes(productId)) {
+            this.cart = this.cart.filter(id => id !== productId);
+          } else {
+            this.cart.push(productId);
+          }
+          this.saveCartToLocalStorage(); // Save cart to local storage
+          this.fetchProducts(); // Refresh product data
