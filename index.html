@@ -158,3 +158,21 @@
       </template>
     </div>
   </div>
+  <script>
+    function productApp() {
+      return {
+        products: [], // Array to store fetched products
+        categories: [], // Array to store product categories
+        filteredCategories: [], // Array to store filtered categories based on search term
+        filter: 'All', // Current category filter
+        searchTerm: '', // Current search term for categories
+        sortOrder: 'asc', // Sorting order (ascending or descending)
+        loading: true, // Boolean to indicate loading state
+        wishlist: JSON.parse(localStorage.getItem('wishlist')) || [], // Initialize wishlist from local storage
+        cart: JSON.parse(localStorage.getItem('cart')) || [], // Initialize cart from local storage
+        showWishlist: false, // Boolean to control wishlist visibility
+        showCart: false, // Boolean to control cart visibility
+        modalOpen: false, // Boolean to control modal visibility
+        modalProduct: null, // Object to store details of the product being viewed in the modal
+        modalLoading: false, // Boolean to indicate loading state in modal
+        dropdownOpen: false, // Boolean to control dropdown menu visibility
