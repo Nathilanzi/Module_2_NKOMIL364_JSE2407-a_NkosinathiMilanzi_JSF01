@@ -109,3 +109,23 @@
       <div class="loader"></div>
     </div>
   </div>
+
+   <!-- Modal for product details -->
+   <div x-show="modalOpen" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-8 relative w-11/12 md:w-3/4 lg:w-1/2">
+      <button @click="modalOpen = false" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+      <template x-if="modalProduct">
+        <div>
+          <img :src="modalProduct.image" alt="Product Image" class="w-full h-64 object-contain">
+          <h2 x-text="modalProduct.title" class="text-2xl mt-4"></h2>
+          <p x-text="'$' + modalProduct.price" class="text-green-500 text-xl mt-2"></p>
+          <p x-text="modalProduct.description" class="text-gray-700 mt-2"></p>
+          <div class="flex space-x-4 mt-4">
+            <!-- Wishlist and cart buttons in modal -->
+            <button @click="toggleWishlist(modalProduct.id)" :class="wishlist.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-4 py-2 rounded">Wishlist</button>
+            <button @click="toggleCart(modalProduct.id)" :class="cart.includes(modalProduct.id) ? 'bg-red-500' : 'bg-gray-500'" class="text-white px-4 py-2 rounded">Cart</button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
