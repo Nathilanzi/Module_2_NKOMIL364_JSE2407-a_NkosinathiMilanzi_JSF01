@@ -257,3 +257,31 @@
             this.cart.push(productId);
           }
         },
+
+        // Show wishlist items by fetching products and filtering by wishlist
+        async showWishlistItems() {
+          this.loading = true;
+          try {
+            const res = await fetch('https://fakestoreapi.com/products');
+            const data = await res.json();
+            this.wishlistProducts = data.filter(product => this.wishlist.includes(product.id));
+            this.showWishlist = true;
+          } catch (err) {
+            console.error('Failed to fetch wishlist items:', err);
+          }
+          this.loading = false;
+        },
+
+        // Show cart items by fetching products and filtering by cart
+        async showCartItems() {
+          this.loading = true;
+          try {
+            const res = await fetch('https://fakestoreapi.com/products');
+            const data = await res.json();
+            this.cartProducts = data.filter(product => this.cart.includes(product.id));
+            this.showCart = true;
+          } catch (err) {
+            console.error('Failed to fetch cart items:', err);
+          }
+          this.loading = false;
+        },
