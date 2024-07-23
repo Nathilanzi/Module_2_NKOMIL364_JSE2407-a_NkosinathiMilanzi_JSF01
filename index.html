@@ -224,3 +224,18 @@
           }
           this.loading = false;
         },
+
+         // Filter categories based on search term
+         filterCategories() {
+          const term = this.searchTerm.toLowerCase();
+          this.filteredCategories = this.categories.filter(category => category.toLowerCase().includes(term));
+        },
+
+        // Reset filters and reload products
+        resetFilters() {
+          this.filter = '';
+          this.sortOrder = 'asc';
+          this.searchTerm = '';
+          this.filteredCategories = this.categories;
+          this.fetchProducts();
+        },
