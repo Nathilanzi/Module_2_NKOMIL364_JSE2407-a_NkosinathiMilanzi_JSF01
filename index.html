@@ -88,3 +88,11 @@
        <button @click="resetFilters()" class="bg-blue-500 text-white px-4 py-2 rounded">Reset</button>
      </div>
    </div>
+     <!-- Product Grid -->
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <template x-for="product in products" :key="product.id">
+        <div class="border rounded-lg p-4" @click="openModal(product.id)">
+          <img :src="product.image" alt="Product Image" class="w-full h-48 object-contain">
+          <h2 x-text="product.title" class="text-xl mt-2"></h2>
+          <p x-text="product.category" class="text-gray-600"></p>
+          <p x-text="'$' + product.price" class="text-green-500 text-lg"></p>
