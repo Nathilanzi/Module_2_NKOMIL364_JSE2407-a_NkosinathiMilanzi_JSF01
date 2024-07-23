@@ -82,3 +82,9 @@
       </div>
     </div>
     <div>
+       <!-- Sorting Buttons -->
+       <button @click="sortOrder = 'asc'; fetchProducts()" class="bg-blue-500 text-white px-4 py-2 rounded">Price: Low to High</button>
+       <button @click="sortOrder = 'desc'; fetchProducts()" class="bg-blue-500 text-white px-4 py-2 rounded">Price: High to Low</button>
+       <button @click="resetFilters()" class="bg-blue-500 text-white px-4 py-2 rounded">Reset</button>
+     </div>
+   </div>
