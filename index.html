@@ -176,3 +176,18 @@
         modalProduct: null, // Object to store details of the product being viewed in the modal
         modalLoading: false, // Boolean to indicate loading state in modal
         dropdownOpen: false, // Boolean to control dropdown menu visibility
+         // Initialize data and set up event listeners
+         async init() {
+          await this.fetchCategories();
+          await this.fetchProducts();
+          window.addEventListener('hashchange', () => {
+            this.updateView();
+          });
+          this.updateView();
+        },
+
+        // Update view based on URL hash
+        updateView() {
+          this.showWishlist = location.hash === '#wishlist';
+          this.showCart = location.hash === '#cart';
+        },
